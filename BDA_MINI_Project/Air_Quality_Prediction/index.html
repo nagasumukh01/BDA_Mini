@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Prediction Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-wind"></i>
+                <span>AQI Predict</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="active" data-section="dashboard">
+                <i class="fas fa-play-circle"></i>
+                <span>Run Analysis</span>
+            </li>
+            <li data-section="results">
+                <i class="fas fa-chart-line"></i>
+                <span>Results</span>
+            </li>
+            <li data-section="predictions">
+                <i class="fas fa-brain"></i>
+                <span>Predictions</span>
+            </li>
+            <li data-section="zones">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Risk Zones</span>
+            </li>
+            <li data-section="about">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="model-info">
+                <i class="fas fa-microchip"></i>
+                <div>
+                    <span class="label">Model Status</span>
+                    <span class="value" id="sidebarStatus">Ready</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="pageTitle">Run Analysis</h1>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator" id="headerStatus">
+                    <span class="status-dot idle"></span>
+                    <span class="status-text">Idle</span>
+                </div>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=AQI&background=667eea&color=fff" alt="User">
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard/Run Analysis Section -->
+        <section id="dashboard" class="section active">
+            <div class="run-analysis-container">
+                <div class="analysis-card main-card">
+                    <div class="analysis-header">
+                        <div class="analysis-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h2>PySpark ML Analysis</h2>
+                        <p>Run the complete Air Quality prediction pipeline</p>
+                    </div>
+                    
+                    <div class="analysis-features">
+                        <div class="feature-item">
+                            <i class="fas fa-database"></i>
+                            <span>Load 87,672 Records</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-calculator"></i>
+                            <span>EPA AQI Calculation</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-cogs"></i>
+                            <span>22 Feature Engineering</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-tree"></i>
+                            <span>Random Forest (50 Trees)</span>
+                        </div>
+                    </div>
+
+                    <button class="run-button" id="runAnalysisBtn">
+                        <i class="fas fa-play"></i>
+                        <span>Run Analysis</span>
+                    </button>
+
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="progress-percent" id="progressPercent">0%</span>
+                            <span class="progress-message" id="progressMessage">Starting...</span>
+                        </div>
+                    </div>
+
+                    <div class="analysis-status" id="analysisStatus">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Click "Run Analysis" to start the PySpark ML pipeline</span>
+                    </div>
+                </div>
+
+                <div class="pipeline-card">
+                    <h3><i class="fas fa-stream"></i> ML Pipeline Stages</h3>
+                    <div class="pipeline-stages">
+                        <div class="stage" id="stage1">
+                            <div class="stage-icon"><i class="fas fa-upload"></i></div>
+                            <div class="stage-info">
+                                <span class="stage-name">Data Loading</span>
+                                <span class="stage-desc">Load CSV, Parse Schema</span>
+                            </div>
+                        </div>
+                        <div class="stage" id="stage2">
+                            <div class="stage-icon"><i class="fas fa-broom"></i></div>
+                            <div class="stage-info">
+                                <span class="stage-name">Preprocessing</span>
+                                <span class="stage-desc">Handle Nulls, Filter</span>
+                            </div>
+                        </div>
+                        <div class="stage" id="stage3">
+                            <div class="stage-icon"><i class="fas fa-calculator"></i></div>
+                            <div class="stage-info">
+                                <span class="stage-name">AQI Calculation</span>
+                                <span class="stage-desc">EPA Formula</span>
+                            </div>
+                        </div>
+                        <div class="stage" id="stage4">
+                            <div class="stage-icon"><i class="fas fa-magic"></i></div>
+                            <div class="stage-info">
+                                <span class="stage-name">Feature Engineering</span>
+                                <span class="stage-desc">Lag, Rolling, Temporal</span>
+                            </div>
+                        </div>
+                        <div class="stage" id="stage5">
+                            <div class="stage-icon"><i class="fas fa-project-diagram"></i></div>
+                            <div class="stage-info">
+                                <span class="stage-name">ML Pipeline</span>
+                                <span class="stage-desc">Indexer, Scaler, Assembler</span>
+                            </div>
+                        </div>
+                        <div class="stage" id="stage6">
+                            <div class="stage-icon"><i class="fas fa-brain"></i></div>
+                            <div class="stage-info">
+                                <span class="stage-name">Model Training</span>
+                                <span class="stage-desc">Random Forest Fit</span>
+                            </div>
+                        </div>
+                        <div class="stage" id="stage7">
+                            <div class="stage-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="stage-info">
+                                <span class="stage-name">Evaluation</span>
+                                <span class="stage-desc">RMSE, MAE, R²</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results" class="section">
+            <div class="no-data-message" id="noResultsMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>No Results Available</h3>
+                <p>Run the analysis first to see the results</p>
+                <button class="btn-primary" onclick="switchToSection('dashboard')">
+                    <i class="fas fa-play"></i> Go to Run Analysis
+                </button>
+            </div>
+
+            <div class="results-content" id="resultsContent" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-database"></i></div>
+                        <div class="stat-info"><h3 id="totalRecords">-</h3><p>Total Records</p></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-bullseye"></i></div>
+                        <div class="stat-info"><h3 id="r2Score">-</h3><p>R² Accuracy</p></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-info"><h3 id="rmseScore">-</h3><p>RMSE Score</p></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fas fa-cogs"></i></div>
+                        <div class="stat-info"><h3 id="featuresCount">-</h3><p>Features Used</p></div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card large">
+                        <div class="chart-header"><h3>Hourly AQI Pattern</h3></div>
+                        <div class="chart-body"><canvas id="hourlyChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header"><h3>AQI Categories Distribution</h3></div>
+                        <div class="chart-body"><canvas id="categoryChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="feature-section">
+                    <h2>Feature Importance</h2>
+                    <p>Top factors influencing Air Quality predictions (from Random Forest)</p>
+                    <div class="feature-bars" id="featureBars">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <div class="aqi-display-section">
+                    <div class="aqi-card" id="aqiCard">
+                        <div class="aqi-value"><span class="number" id="avgAqi">-</span><span class="label">Average Predicted AQI</span></div>
+                        <div class="aqi-category"><i class="fas fa-lungs"></i><span id="aqiCategoryText">-</span></div>
+                    </div>
+                    <div class="pollutant-grid" id="pollutantGrid">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Predictions Section -->
+        <section id="predictions" class="section">
+            <div class="no-data-message" id="noPredictionsMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>No Predictions Available</h3>
+                <p>Run the analysis first to see predictions</p>
+                <button class="btn-primary" onclick="switchToSection('dashboard')">
+                    <i class="fas fa-play"></i> Go to Run Analysis
+                </button>
+            </div>
+
+            <div class="predictions-content" id="predictionsContent" style="display: none;">
+                <h2>AQI Predictions</h2>
+                <p>Live predictions from the trained Random Forest model</p>
+                
+                <div class="predictions-controls">
+                    <div class="filter-group">
+                        <label>Zone</label>
+                        <select id="zoneFilter">
+                            <option value="all">All Zones</option>
+                            <option value="north">Zone North</option>
+                            <option value="south">Zone South</option>
+                            <option value="east">Zone East</option>
+                            <option value="west">Zone West</option>
+                            <option value="central">Zone Central</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Category</label>
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="good">Good</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="sensitive">Unhealthy (Sensitive)</option>
+                            <option value="unhealthy">Unhealthy</option>
+                            <option value="very-unhealthy">Very Unhealthy</option>
+                            <option value="hazardous">Hazardous</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" id="applyFilters">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table" id="predictionsTable">
+                        <thead>
+                            <tr>
+                                <th>DateTime</th>
+                                <th>Zone</th>
+                                <th>PM2.5</th>
+                                <th>PM10</th>
+                                <th>Actual AQI</th>
+                                <th>Predicted AQI</th>
+                                <th>Error</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody id="predictionsBody"></tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <button class="btn-page" id="prevPage"><i class="fas fa-chevron-left"></i></button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button class="btn-page" id="nextPage"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Zones Section -->
+        <section id="zones" class="section">
+            <div class="no-data-message" id="noZonesMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>No Zone Data Available</h3>
+                <p>Run the analysis first to see zone analysis</p>
+                <button class="btn-primary" onclick="switchToSection('dashboard')">
+                    <i class="fas fa-play"></i> Go to Run Analysis
+                </button>
+            </div>
+
+            <div class="zones-content" id="zonesContent" style="display: none;">
+                <h2>High-Risk Zone Analysis</h2>
+                <p>Zone-wise air quality risk assessment from model predictions</p>
+                
+                <div class="zones-grid" id="zonesGrid">
+                    <!-- Dynamically populated -->
+                </div>
+                
+                <div class="chart-card full-width">
+                    <div class="chart-header"><h3>Zone Comparison</h3></div>
+                    <div class="chart-body"><canvas id="zoneComparisonChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="about-container">
+                <div class="about-header">
+                    <i class="fas fa-wind about-icon"></i>
+                    <h2>Air Quality Prediction System</h2>
+                    <p>Dynamic Machine Learning Analysis Using PySpark</p>
+                </div>
+                <div class="about-content">
+                    <div class="about-card">
+                        <h3><i class="fas fa-bullseye"></i> How It Works</h3>
+                        <p>This dashboard connects to a Flask backend that runs PySpark analysis in real-time. 
+                        When you click "Run Analysis", the server executes the complete ML pipeline and 
+                        streams results back to this interface dynamically.</p>
+                    </div>
+                    <div class="about-card">
+                        <h3><i class="fas fa-cogs"></i> Technology Stack</h3>
+                        <div class="tech-badges">
+                            <span class="tech-badge"><i class="fab fa-python"></i> Python 3.12</span>
+                            <span class="tech-badge"><i class="fas fa-bolt"></i> PySpark 4.0</span>
+                            <span class="tech-badge"><i class="fas fa-brain"></i> MLlib</span>
+                            <span class="tech-badge"><i class="fas fa-server"></i> Flask</span>
+                            <span class="tech-badge"><i class="fab fa-html5"></i> HTML5</span>
+                            <span class="tech-badge"><i class="fab fa-js"></i> JavaScript</span>
+                        </div>
+                    </div>
+                    <div class="about-card">
+                        <h3><i class="fas fa-list-check"></i> Pipeline Steps</h3>
+                        <ol class="pipeline-list">
+                            <li>Load 87,672 air quality records from CSV</li>
+                            <li>Preprocess data and handle missing values</li>
+                            <li>Calculate AQI using EPA standard formula</li>
+                            <li>Engineer 22 features (temporal, lag, interaction)</li>
+                            <li>Build 6-stage ML pipeline with transformers</li>
+                            <li>Train Random Forest with 50 trees, maxDepth=10</li>
+                            <li>Evaluate model (R², RMSE, MAE)</li>
+                            <li>Return predictions and insights to dashboard</li>
+                        </ol>
+                    </div>
+                    <div class="about-card">
+                        <h3><i class="fas fa-chart-pie"></i> AQI Scale</h3>
+                        <div class="aqi-legend">
+                            <div class="aqi-item"><span class="dot good"></span>Good (0-50)</div>
+                            <div class="aqi-item"><span class="dot moderate"></span>Moderate (51-100)</div>
+                            <div class="aqi-item"><span class="dot sensitive"></span>Sensitive (101-150)</div>
+                            <div class="aqi-item"><span class="dot unhealthy"></span>Unhealthy (151-200)</div>
+                            <div class="aqi-item"><span class="dot very-unhealthy"></span>Very Unhealthy (201-300)</div>
+                            <div class="aqi-item"><span class="dot hazardous"></span>Hazardous (301+)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-footer">December 2025 • Dynamic PySpark Analysis</div>
+            </div>
+        </section>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+zone,avg_predicted_aqi,max_predicted_aqi,min_predicted_aqi,std_predicted_aqi,num_records,risk_level
+Zone_South,125.16,623.51,57.49,53.66,3534,MODERATE
+Zone_East,124.79,692.65,57.58,51.77,3554,MODERATE
+Zone_West,124.1,655.46,57.57,49.61,3384,MODERATE
+Zone_Central,124.0,657.73,57.59,50.9,3572,MODERATE
+Zone_North,123.55,662.75,57.47,49.29,3503,MODERATE
